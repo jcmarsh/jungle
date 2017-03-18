@@ -4,7 +4,7 @@ require("hex_tile")
 require("hex_types")
 require("keyboard")
 
-version_num = 0.01
+version_str = "0.01.01"
 scrn_width = 1024
 scrn_height = 600
 -- Layout is four panes, main window on left with console in the bottom, stat and misc on right. 
@@ -38,7 +38,7 @@ end
 
 function love.load()
    love.window.setMode(scrn_width, scrn_height, {fullscreen=false, vsync=false, fsaa=0})
-   love.window.setTitle("Ver: " .. version_num) 
+   love.window.setTitle("Ver: " .. version_str) 
 
    windows = {}
    windows[main] = Window:new({orig_x = 0, orig_y = 0, width = third_w_calc, height = console_h_calc, actors = {}})
@@ -46,13 +46,14 @@ function love.load()
    windows[detailed] = DetailWindow:new({orig_x = third_w_calc, orig_y = 0, width = third_width, height = half_height, actors = {}})
    windows[misc_4] = Window:new({orig_x = third_w_calc, orig_y = half_height, width = third_width, height = half_height, actors = {}})
 
-   con = Console:new({lines = {"Welcome to the Jungle!", "Alpha Ver: " .. version_num}, width = windows[console].width, height = windows[console].height})
+   con = Console:new({lines = {"Welcome to the Jungle!", "Alpha Ver: " .. version_str}, width = windows[console].width, height = windows[console].height})
    windows[console].actors[1] = con
 
    con:registerFunction("quit", love.event.quit)
 
    -- Make the hex map
-   windows[main].actors = buildThreeLayer(windows[main].width / 2, windows[main].height / 2, hex_width, hex_height)
+   -- windows[main].actors = buildThreeLayer(windows[main].width / 2, windows[main].height / 2, hex_width, hex_height)
+   windows[main].actors = buildFromFile(windows[main].width / 2, windows[main].height / 2, hex_width, hex_height)
 end
 
 function love.draw()

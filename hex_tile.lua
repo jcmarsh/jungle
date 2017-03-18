@@ -1,6 +1,11 @@
+hex_color_default = {r = 0, g = 220, b = 0}
+hex_color_select = {r = 220, g =220, b = 220}
+
+-- index = 0, color = {r = hex_color_default.r, g = hex_color_default.g, b = hex_color_default.b}, 
+
 Hex = {orig_x = 0, orig_y = 0, width = 104, height = 90,
        terrain_height = 0, terrain_scalar = 20, neighbor_heights = {SW_h = 0, S_h = 0, SE_h = 0},
-       index = 0, color = {r = 220, g = 0, b = 0}, 
+       index = 0, color = hex_color_default,
        center = {r = 255, g = 255, b = 0}, revealed = false, hex_type = {}}
 
 function Hex:new(o)
@@ -93,9 +98,9 @@ function Hex:handleMouse(x, y, button)
    if self:containsPoint(x, y) then
       setDetailed(self)
       self.revealed = true
-      self.color = {r = 0, g = 30, b = 220}
+      self.color = hex_color_select
    else 
-      self.color = {r = 220, g = 0, b = 0}
+      self.color = hex_color_default
    end
 end
 
@@ -103,6 +108,27 @@ function makeHex(o_x, o_y, w, h, t_h)
    hex = Hex:new({orig_x = o_x, orig_y = o_y, width = w, height = h, terrain_height = t_h, neighbor_heights = {SW_h = 0, S_h = 0, SE_h = 0}, hex_type = EmptySpace:new()})
    hex:init()
    return hex
+end
+
+function buildFromFile(center_x, center_y, width, height)
+   map = {}
+   x_step = 3 * width / 4
+   y_step = height / 2
+   hex_index = 1
+
+   f = io.open("./jungle/level.txt", "r")
+   io.input(f)
+   line = io.read()
+
+   print(line)
+
+   for i in string.gmatch(line, "%d+") do
+      -- print(i)
+      map[hex_index] = makeHex(center_x, center_y - height, width, height, i)
+      hex_index = hex_index + 1
+   end
+
+   return map
 end
 
 function buildThreeLayer(center_x, center_y, width, height)
